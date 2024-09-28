@@ -68,12 +68,18 @@ public class I18nConvertor {
         if (!Files.exists(outputPath)) {
             Files.createDirectories(outputPath);
         }
-
+        boolean isFirstIteration = true;
         for (Map.Entry<String, Properties> entry : propertiesMap.entrySet()) {
             String[] col = entry.getKey().split(":");
             String lang = col[0];
             if (lang.length() > 0) {
                 lang = "_" + lang;
+            }
+            if (isFirstIteration) {
+                isFirstIteration = false;
+                try (OutputStream outputStream = new FileOutputStream(outputPath.resolve(baseName + ".properties").toFile())) {
+                    entry.getValue().store(outputStream, null);
+                }
             }
             try (OutputStream outputStream = new FileOutputStream(outputPath.resolve(baseName + lang + ".properties").toFile())) {
                 entry.getValue().store(outputStream, null);
